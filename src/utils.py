@@ -14,6 +14,8 @@ class UrlInfo:
         self.url = url
         if from_urls is None:
             from_urls = set()
+        # from urls is a set of tuples (from, title), where from is an url from where this url has been linked and title
+        # is the title of the href element pointing to this url
         self.from_urls: Set[Tuple[str, str]] = from_urls
 
     def to_dict(self):
