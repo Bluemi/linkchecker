@@ -40,7 +40,8 @@ def main():
 
     # show_titles(data, args.verbose)
     # check_external_links(data, args.verbose)
-    check_typos(data, auth, verbose=args.verbose)
+    # load_page_and_execute(data, check_page, auth, verbose=args.verbose)
+    load_page_and_execute(data, check_lorem_ipsum, auth, verbose=args.verbose)
 
 
 def show_titles(data, show_from_urls=False):
@@ -82,7 +83,7 @@ def check_external_links(data, verbose):
             print('  -----------------')
 
 
-def check_typos(data, auth=None, verbose=False):
+def load_page_and_execute(data, func, auth=None, verbose=False):
     paths = []
     # load pages
     for url_info in data['intern_urls']:
@@ -94,7 +95,7 @@ def check_typos(data, auth=None, verbose=False):
             paths.append((filepath, url_info))
 
     for filepath, url_info in paths:
-        check_page(filepath, url_info)
+        func(filepath, url_info)
 
 
 def check_page(filepath, url_info):
@@ -183,6 +184,22 @@ def check_for_typos(text):
     typos = spell.unknown(words)
     typos = [t for t in typos if not ignore_word(t)]
     return typos
+
+
+def check_lorem_ipsum(filepath, url_info):
+    html_content = load_html_from_disk(filepath)
+    text = extract_text_from_html(html_content)
+    if check_for_lorem_ipsum(text):
+        print(f'found lorem ipsum in {url_info.url}')
+
+
+def check_for_lorem_ipsum(text):
+    """Check the text for typos using the SpellChecker."""
+    words = []
+    for s in text.split():
+        words.extend(normalize_string(s))
+    words = [w.lower() for w in words]
+    return 'lorem' in words
 
 
 if __name__ == '__main__':
