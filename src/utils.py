@@ -65,3 +65,17 @@ def print_links(external_urls: List[UrlInfo], failed_urls: List[UrlInfo], intern
 
 def iter_all_urls(data):
     return [UrlInfo.from_dict(ui) for ui in chain(data['intern_urls'], data['failed_urls'], data['external_urls'])]
+
+
+def normalize_string(string) -> List[str]:
+    words = [string]
+    for sep in ['-', '\n', '.', '/', ':']:
+        tmp_words = []
+        for wds in [w.split(sep) for w in words]:
+            tmp_words.extend(wds)
+        words = tmp_words
+
+    def _norm_str(string_arg):
+        return ''.join(e for e in string_arg if e.isalnum())
+
+    return [_norm_str(w) for w in words]
